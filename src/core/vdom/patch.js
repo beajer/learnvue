@@ -30,7 +30,17 @@ import {
 export const emptyNode = new VNode('', {}, [])
 
 const hooks = ['create', 'activate', 'update', 'remove', 'destroy']
-
+/*
+* params{
+*    oldVnode
+*    newVnode
+*}
+*
+* 判断vnode是否可以复用
+* 两个vnode.key相同
+*     两个vnode.(tag | isComment)相同，均存在vNodeData，sameInputType
+*   or两个异步组件工厂函数相同
+*/
 function sameVnode (a, b) {
   return (
     a.key === b.key && (
@@ -48,6 +58,10 @@ function sameVnode (a, b) {
   )
 }
 
+/*
+* oldVnode不是input标签
+* or oldVnode 和 newVnode的input都没有value attribute但是可以通过el.value取值
+*/
 function sameInputType (a, b) {
   if (a.tag !== 'input') return true
   let i
@@ -71,7 +85,7 @@ export function createPatchFunction (backend) {
   const cbs = {}
 
   const { modules, nodeOps } = backend
-
+  /* 收集backend里各个modules里的hooks */
   for (i = 0; i < hooks.length; ++i) {
     cbs[hooks[i]] = []
     for (j = 0; j < modules.length; ++j) {
@@ -629,6 +643,7 @@ export function createPatchFunction (backend) {
   }
 
   return function patch (oldVnode, vnode, hydrating, removeOnly, parentElm, refElm) {
+    /* vnode不存在时, 如果olcVnode，调用销毁钩子 */
     if (isUndef(vnode)) {
       if (isDef(oldVnode)) invokeDestroyHook(oldVnode)
       return
@@ -636,7 +651,7 @@ export function createPatchFunction (backend) {
 
     let isInitialPatch = false
     const insertedVnodeQueue = []
-
+    /* oldVnode未定义，即root节点时，创建新节点 */
     if (isUndef(oldVnode)) {
       // empty mount (likely as component), create new root element
       isInitialPatch = true
