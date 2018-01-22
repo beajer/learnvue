@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script type="text/javascript" src="./vue.js"></script>
+</head>
+<body>
+	<h1>static string</h1>
+	<div id="app">
+		<h5>static string in #app</h5>
+		<p>{{str}}</p>
+		<ul>
+			<li v-for="item in items">
+				{{item}}
+			</li>
+		</ul>
+		<button @click="change"> O </button>
+		<my-component :artical="artical"></my-component>
+	</div>
+	<script>
+		Vue.component('my-component', {
+			template: `<div><h5>{{title}}</h5><p v-for="item in artical">{{item.text}}</p></div>`,
+			props: {
+				artical: Array
+			},
+			data(){
+				return {
+					title: 'artical'
+				}
+			},
+			mounted(){
+				this.tltle += '1'
+			}
+		})
+		new Vue({
+			el: '#app',
+			data: {
+				str: 'mutable string',
+				items: ['a','b','c','d','e'],
+				artical: [{
+					text: '感谢社区中各位的大力支持,',
+					text: 'Transducing 意味着带有变形（transforming）的递减（reduction）。',
+				}]
+			},
+			methods: {
+				change: function(){
+					this.str = this.str.split('').reverse().join('')
+				}
+			}
+		})
+	</script>
+</body>
+</html>
