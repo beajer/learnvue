@@ -39,3 +39,7 @@ export function parsePath (path: string): any {
     return obj
   }
 }
+/*
+  let obj ={ a: {b: 1}}
+  parsePath('a.b')(obj) == 1
+*/
