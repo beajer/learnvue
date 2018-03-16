@@ -18,6 +18,10 @@
 		<button @click="change"> O </button>
 		<my-component :artical="artical"></my-component>
 	</div>
+	<div id="message-event-example" class="demo">
+		<p v-for="msg in messages">{{ msg }}</p>
+		<button-message v-on:message="handleMessage"></button-message>
+	</div>
 	<script>
 		Vue.component('my-component', {
 			template: `<div><h5>{{title}}</h5><p v-for="item in artical">{{item.text}}</p></div>`,
@@ -35,17 +39,48 @@
 		})
 		new Vue({
 			el: '#app',
-			data: {
-				str: 'mutable string',
-				items: ['a','b','c','d','e'],
-				artical: [{
-					text: '感谢社区中各位的大力支持,',
-					text: 'Transducing 意味着带有变形（transforming）的递减（reduction）。',
-				}]
+			data(){
+				return {
+					str: 'mutable string',
+					items: ['a','b','c','d','e'],
+					artical: [{
+						text: '感谢社区中各位的大力支持,',
+						text: 'Transducing 意味着带有变形（transforming）的递减（reduction）。',
+					}]
+				}
 			},
 			methods: {
 				change: function(){
 					this.str = this.str.split('').reverse().join('')
+				}
+			}
+		})
+		Vue.component('button-message', {
+			template: `<div>
+				<input type="text" v-model="message" />
+				<button v-on:click="handleSendMessage">Send</button>
+			</div>`,
+			data: function () {
+				return {
+					message: 'test message'
+				}
+			},
+			methods: {
+				handleSendMessage: function () {
+				this.$emit('message', { message: this.message })
+				}
+			}
+		})
+		new Vue({
+			el: '#message-event-example',
+			data(){
+				return {
+					messages: []
+				}
+			},
+			methods: {
+				handleMessage: function (payload) {
+					this.messages.push(payload.message)
 				}
 			}
 		})
